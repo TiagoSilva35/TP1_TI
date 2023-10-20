@@ -5,5 +5,5 @@ This is the first practical work for the TI course. We will be working with the 
 
 ## Files
 - **CarDataset.xlsx:** Contains the required data for this project.
-- **ya.py:** Main code for the project.
+- **main.py:** Main code for the project.
 - **huffmancode.py:** Auxiliary code used in the development process.
