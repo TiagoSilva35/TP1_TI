@@ -2,11 +2,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import huffmancodec as huffc
 
 # Exercise 1 
-#data = pd.read_excel('/home/tiago/Desktop/TI/trabalho_tp1/TP1_TI/' + 'CarDataset.xlsx')
+data = pd.read_excel('/home/tiago/Desktop/TI/trabalho_tp1/TP1_TI/' + 'CarDataset.xlsx')
 #data = pd.read_excel('C:\\Users\\Utilizador\\Desktop\\lei\\2 ano\\1 semestre\\TI\\TP1_TI' + 'CarDataset.xlsx')
-data = pd.read_excel('C:\\Users\\Utilizador\\Downloads\\' + 'CarDataset.xlsx')
+#data = pd.read_excel('C:\\Users\\Utilizador\\Downloads\\' + 'CarDataset.xlsx')
 matrix = data.to_numpy()
 var_names = data.columns.values.tolist()
 
@@ -73,11 +74,6 @@ def entropy(matrix) -> float:
         entropy -= temp * math.log2(temp)
     return entropy
 
-
-
-
-
-
 data_viz(var_names, matrix)
 occurrences = count_occurrences(var_names, matrix)
 occurence_viz(var_names, occurrences)
@@ -103,3 +99,8 @@ overall_entropy = entropy(matrix.flatten())
 print(f"Overall entropy: {overall_entropy}")        
 
 print(entropy_values)
+
+#Exercise 8
+codec = huffc.HuffmanCodec.from_data(data) #Provavelmente aqui não será data será outra coisa
+symbols, lengths = codec.get_code_len()
+print(symbols, lengths)
