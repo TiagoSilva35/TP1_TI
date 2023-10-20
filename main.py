@@ -93,3 +93,5 @@ matrix = data.to_numpy()
 entropy_values = entropy(matrix, var_names)
 print(entropy_values)
 print(np.sum(entropy_values) / 7)
+
+#comentário
