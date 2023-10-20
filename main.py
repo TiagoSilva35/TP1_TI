@@ -93,7 +93,7 @@ entropy_values = []
 
 for i, var in enumerate(var_names):
         entropy_values.append(entropy(matrix[:, i]))
-        print(f"Valor da entropia de {var}: {entropy(matrix[:, i])}")
+        print(f"Entropy of {var}: {entropy(matrix[:, i])}")
 
 overall_entropy = entropy(matrix.flatten())
 print(f"Overall entropy: {overall_entropy}")        
