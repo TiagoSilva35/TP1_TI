@@ -62,6 +62,18 @@ def binning(matrix, variable, interval, min_val, max_val):
         temp_matrix[condition] = np.argmax(counts)
     return np.flip(temp_matrix)
 
+#Exercise 7
+def entropy(matrix, var_names):
+    entropy_ar = []
+    for i, var in enumerate(var_names):
+        entropy = 0
+        unique_values, unique_counts = np.unique(matrix[:, i], return_counts=True)
+        for j in range(len(unique_values)):
+            temp = unique_counts[j] / sum(unique_counts)
+            entropy -= temp * math.log2(temp)
+        entropy_ar.append(entropy)
+    return entropy_ar
+
 
 # data_viz(var_names, matrix)
 occurrences = count_occurrences(var_names, matrix)
@@ -76,22 +88,6 @@ for var in vars:
 occurrences = count_occurrences(var_names, matrix)
 occurence_viz(var_names, occurrences)
 
-#Exercicio 7
-def entropy(matrix, var_names):
-    entropy_ar = []
-    for i, var in enumerate(var_names):
-        entropy = 0;
-        unique_values, unique_counts = np.unique(matrix[:, i], return_counts=True)
-        for j in range(len(unique_values)):
-            temp = unique_counts[j] / sum(unique_counts)
-            entropy -= temp * math.log2(temp)
-        entropy_ar.append(entropy)
-    return entropy_ar
-
 print(var_names)
 matrix = data.to_numpy()
 entropy_values = entropy(matrix, var_names)
-print(entropy_values)
-print(np.sum(entropy_values) / 7)
-
-#comentário
