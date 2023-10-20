@@ -63,19 +63,16 @@ def binning(matrix, variable, interval, min_val, max_val):
     return np.flip(temp_matrix)
 
 #Exercise 7
-def entropy(matrix, var_names):
-    entropy_ar = []
-    for i, var in enumerate(var_names):
-        entropy = 0
-        unique_values, unique_counts = np.unique(matrix[:, i], return_counts=True)
-        for j in range(len(unique_values)):
-            temp = unique_counts[j] / sum(unique_counts)
-            entropy -= temp * math.log2(temp)
-        entropy_ar.append(entropy)
-    return entropy_ar
+def entropy(matrix) -> float:
+    entropy = 0
+    unique_values, unique_counts = np.unique(matrix, return_counts=True)
+    for j in range(len(unique_values)):
+        temp = unique_counts[j] / sum(unique_counts)
+        entropy -= temp * math.log2(temp)
+    return entropy
 
 
-# data_viz(var_names, matrix)
+data_viz(var_names, matrix)
 occurrences = count_occurrences(var_names, matrix)
 occurence_viz(var_names, occurrences)
 
@@ -90,6 +87,13 @@ occurence_viz(var_names, occurrences)
 
 print(var_names)
 matrix = data.to_numpy()
-entropy_values = entropy(matrix, var_names)
+entropy_values = []
 
-#a
+for i, var in enumerate(var_names):
+        entropy_values.append(entropy(matrix[:, i]))
+        print(f"Valor da entropia de {var}: {entropy(matrix[:, i])}")
+
+overall_entropy = entropy(matrix.flatten())
+print(f"Overall entropy: {overall_entropy}")        
+
+print(entropy_values)
