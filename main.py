@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import math
 
 # Exercise 1 
-data = pd.read_excel('/home/tiago/Desktop/TI/trabalho_tp1/TP1_TI/' + 'CarDataset.xlsx')
+#data = pd.read_excel('/home/tiago/Desktop/TI/trabalho_tp1/TP1_TI/' + 'CarDataset.xlsx')
+#data = pd.read_excel('C:\\Users\\Utilizador\\Desktop\\lei\\2 ano\\1 semestre\\TI\\TP1_TI' + 'CarDataset.xlsx')
+data = pd.read_excel('C:\\Users\\Utilizador\\Downloads\\' + 'CarDataset.xlsx')
 matrix = data.to_numpy()
 var_names = data.columns.values.tolist()
 
@@ -56,11 +58,11 @@ def occurence_viz(var_names, occurrences):
 # Exercise 6
 def binning(matrix, variable, interval, min_val, max_val):
     for i in range(min_val, max_val + 1, interval):
-        temp_matrix = np.flip(matrix[:, variable])
+        temp_matrix = matrix[:, variable]
         condition = np.where(np.logical_and(i <= temp_matrix, temp_matrix <= i + interval))
         counts = np.bincount(temp_matrix[condition]) if np.size(temp_matrix[condition]) > 0 else 0
         temp_matrix[condition] = np.argmax(counts)
-    return np.flip(temp_matrix)
+    return temp_matrix
 
 #Exercise 7
 def entropy(matrix, var_names):
@@ -73,6 +75,10 @@ def entropy(matrix, var_names):
             entropy -= temp * math.log2(temp)
         entropy_ar.append(entropy)
     return entropy_ar
+
+
+
+
 
 
 # data_viz(var_names, matrix)
@@ -88,8 +94,6 @@ for var in vars:
 occurrences = count_occurrences(var_names, matrix)
 occurence_viz(var_names, occurrences)
 
-print(var_names)
-matrix = data.to_numpy()
-entropy_values = entropy(matrix, var_names)
-
-#a
+# print(var_names)
+# matrix = data.to_numpy()
+# entropy_values = entropy(matrix, var_names)
