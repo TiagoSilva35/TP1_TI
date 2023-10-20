@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 # Exercise 1 
-data = pd.read_excel('C:\\Users\\Utilizador\\Downloads\\' + 'CarDataset.xlsx')
+data = pd.read_excel('/home/tiago/Desktop/TI/trabalho_tp1/TP1_TI/' + 'CarDataset.xlsx')
 matrix = data.to_numpy()
 var_names = data.columns.values.tolist()
-print(var_names)
 
 # Exercise 2
 def data_viz(var_names, matrix):
@@ -75,3 +75,21 @@ for var in vars:
 
 occurrences = count_occurrences(var_names, matrix)
 occurence_viz(var_names, occurrences)
+
+#Exercicio 7
+def entropy(matrix, var_names):
+    entropy_ar = []
+    for i, var in enumerate(var_names):
+        entropy = 0;
+        unique_values, unique_counts = np.unique(matrix[:, i], return_counts=True)
+        for j in range(len(unique_values)):
+            temp = unique_counts[j] / sum(unique_counts)
+            entropy -= temp * math.log2(temp)
+        entropy_ar.append(entropy)
+    return entropy_ar
+
+print(var_names)
+matrix = data.to_numpy()
+entropy_values = entropy(matrix, var_names)
+print(entropy_values)
+print(np.sum(entropy_values) / 7)
