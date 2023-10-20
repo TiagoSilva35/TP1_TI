@@ -91,3 +91,5 @@ occurence_viz(var_names, occurrences)
 print(var_names)
 matrix = data.to_numpy()
 entropy_values = entropy(matrix, var_names)
+
+#a
