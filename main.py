@@ -74,9 +74,9 @@ def entropy(matrix) -> float:
         entropy -= temp * math.log2(temp)
     return entropy
 
-data_viz(var_names, matrix)
-occurrences = count_occurrences(var_names, matrix)
-occurence_viz(var_names, occurrences)
+#data_viz(var_names, matrix)
+#occurrences = count_occurrences(var_names, matrix)
+#occurence_viz(var_names, occurrences)
 
 vars = [2, 3, 5]
 for var in vars:
@@ -85,9 +85,9 @@ for var in vars:
     matrix[:, var] = binning(matrix, var, 5, min_val, max_val) if (var != 5) else binning(matrix, var, 40, min_val, max_val)
 
 occurrences = count_occurrences(var_names, matrix)
-occurence_viz(var_names, occurrences)
+#occurence_viz(var_names, occurrences)
 
-print(var_names)
+#print(var_names)
 matrix = data.to_numpy()
 entropy_values = []
 
@@ -98,9 +98,39 @@ for i, var in enumerate(var_names):
 overall_entropy = entropy(matrix.flatten())
 print(f"Overall entropy: {overall_entropy}")        
 
-print(entropy_values)
+#print(entropy_values)
 
 #Exercise 8
-codec = huffc.HuffmanCodec.from_data(data) #Provavelmente aqui não será data será outra coisa
+codec = huffc.HuffmanCodec.from_data(matrix.flatten().tolist()) #Provavelmente aqui não será data será outra coisa
 symbols, lengths = codec.get_code_len()
-print(symbols, lengths)
+
+map_symbols = {}
+
+for i in range(len(symbols)):
+    map_symbols[symbols[i]] = lengths[i]
+#print(map_symbols)
+
+bits_por_simbolo_ar = []
+variancia_ar = []
+
+def bits_Simbolo(matrix):
+    bits_por_simbolo = 0
+    unique_values, unique_counts = np.unique(matrix, return_counts=True)
+    for j in range(len(unique_values)):
+        bits_por_simbolo += map_symbols[unique_values[j]] * (unique_counts[j]/sum(unique_counts))
+    bits_por_simbolo_ar.append(bits_por_simbolo)
+
+def variancia(matrix,i):
+    variancia = 0
+    unique_values, unique_counts = np.unique(matrix, return_counts=True)
+    for j in range(len(unique_values)):
+        variancia += pow(bits_por_simbolo_ar[i] - map_symbols[unique_values[j]],2) * (unique_counts[j]/sum(unique_counts))
+    variancia_ar.append(variancia)
+
+for i, var in enumerate(var_names):
+        bits_Simbolo(matrix[:, i])
+        variancia(matrix[:, i],i)
+        print(f"Bits per symbol {var}: {bits_por_simbolo_ar[i]}")
+        print(f"Variancia {var}: {variancia_ar[i]}")
+
+
