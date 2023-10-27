@@ -60,7 +60,7 @@ def occurence_viz(var_names, occurrences):
         plt.tight_layout()
         plt.show()
 
-occurence_viz(var_names, occurrences)
+#occurence_viz(var_names, occurrences)
 
 # Exercise 6
 def binning(matrix, variable, interval, min_val, max_val):
@@ -78,7 +78,7 @@ for var in vars:
     matrix[:, var] = binning(matrix, var, 5, min_val, max_val) if (var != 5) else binning(matrix, var, 40, min_val, max_val)
 
 occurrences = count_occurrences(var_names, matrix)
-occurence_viz(var_names, occurrences)
+#occurence_viz(var_names, occurrences)
 
 #Exercise 7
 def entropy(matrix) -> float:
@@ -100,16 +100,6 @@ overall_entropy = entropy(matrix.flatten())
 print(f"Overall entropy: {overall_entropy}")  
 
 #Exercise 8
-codec = huffc.HuffmanCodec.from_data(matrix.flatten().tolist()) #Provavelmente aqui não será data será outra coisa
-symbols, lengths = codec.get_code_len()
-
-map_symbols = {}
-
-for i in range(len(symbols)):
-    map_symbols[symbols[i]] = lengths[i]
-
-bits_per_symbol_ar = []
-variance_ar = []
 
 def bits_per_symbol(matrix):
     bits_per_symbol = 0
@@ -122,11 +112,23 @@ def variance(matrix, i):
     variance = 0
     unique_values, unique_counts = np.unique(matrix, return_counts=True)
     for j in range(len(unique_values)):
-        variance += pow(bits_per_symbol_ar[i] - map_symbols[unique_values[j]],2) * (unique_counts[j]/sum(unique_counts))
+        variance += pow(bits_per_symbol_ar[i] - map_symbols[unique_values[j]], 2) * (unique_counts[j] / sum(unique_counts))
     variance_ar.append(variance)
 
+bits_per_symbol_ar = []
+variance_ar = []
+
 for i, var in enumerate(var_names):
-        bits_per_symbol(matrix[:, i])
-        variance(matrix[:, i],i)
-        print(f"Bits per symbol {var}: {bits_per_symbol_ar[i]}")
-        print(f"Variance {var}: {variance_ar[i]}")
+    codec = huffc.HuffmanCodec.from_data(matrix[:, i]) #Provavelmente aqui não será data será outra coisa
+    symbols, lengths = codec.get_code_len()
+
+    map_symbols = {}
+
+    for j in range(len(symbols)):
+        map_symbols[symbols[j]] = lengths[j]
+
+
+    bits_per_symbol(matrix[:, i])
+    variance(matrix[:, i], i)
+    print(f"Bits per symbol {var}: {bits_per_symbol_ar[i]}")
+    print(f"Variance {var}: {variance_ar[i]}")
