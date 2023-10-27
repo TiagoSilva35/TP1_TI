@@ -74,9 +74,9 @@ def entropy(matrix) -> float:
         entropy -= temp * math.log2(temp)
     return entropy
 
-#data_viz(var_names, matrix)
-#occurrences = count_occurrences(var_names, matrix)
-#occurence_viz(var_names, occurrences)
+data_viz(var_names, matrix)
+occurrences = count_occurrences(var_names, matrix)
+occurence_viz(var_names, occurrences)
 
 vars = [2, 3, 5]
 for var in vars:
@@ -101,14 +101,13 @@ print(f"Overall entropy: {overall_entropy}")
 #print(entropy_values)
 
 #Exercise 8
-codec = huffc.HuffmanCodec.from_data(matrix.flatten().tolist()) #Provavelmente aqui não será data será outra coisa
+codec = huffc.HuffmanCodec.from_data(matrix.flatten().tolist()) 
 symbols, lengths = codec.get_code_len()
 
 map_symbols = {}
 
 for i in range(len(symbols)):
     map_symbols[symbols[i]] = lengths[i]
-#print(map_symbols)
 
 bits_por_simbolo_ar = []
 variancia_ar = []
