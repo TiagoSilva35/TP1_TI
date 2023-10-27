@@ -10,6 +10,7 @@ import huffmancodec as huffc
 data = pd.read_excel('C:\\Users\\Utilizador\\Downloads\\' + 'CarDataset.xlsx')
 matrix = data.to_numpy()
 var_names = data.columns.values.tolist()
+#print(np.shape(matrix))
 
 # Exercise 2
 def data_viz(var_names, matrix):
@@ -80,7 +81,7 @@ for var in vars:
 occurrences = count_occurrences(var_names, matrix)
 #occurence_viz(var_names, occurrences)
 
-#Exercise 7
+# Exercise 7
 def entropy(matrix) -> float:
     entropy = 0
     unique_values, unique_counts = np.unique(matrix, return_counts=True)
@@ -99,8 +100,7 @@ for i, var in enumerate(var_names):
 overall_entropy = entropy(matrix.flatten())
 print(f"Overall entropy: {overall_entropy}")  
 
-#Exercise 8
-
+# Exercise 8
 def bits_per_symbol(matrix):
     bits_per_symbol = 0
     unique_values, unique_counts = np.unique(matrix, return_counts=True)
@@ -119,7 +119,7 @@ bits_per_symbol_ar = []
 variance_ar = []
 
 for i, var in enumerate(var_names):
-    codec = huffc.HuffmanCodec.from_data(matrix[:, i]) #Provavelmente aqui não será data será outra coisa
+    codec = huffc.HuffmanCodec.from_data(matrix[:, i])
     symbols, lengths = codec.get_code_len()
 
     map_symbols = {}
@@ -127,8 +127,35 @@ for i, var in enumerate(var_names):
     for j in range(len(symbols)):
         map_symbols[symbols[j]] = lengths[j]
 
-
     bits_per_symbol(matrix[:, i])
     variance(matrix[:, i], i)
     print(f"Bits per symbol {var}: {bits_per_symbol_ar[i]}")
     print(f"Variance {var}: {variance_ar[i]}")
+
+# Exercise 9
+for i in range(6): print(f"Correlation Coeficient (MPG / {var_names[i]}): {np.corrcoef(matrix[:, i], matrix[:, 6], rowvar=True)[0, 1]}")
+
+# Exercise 10
+vars = [2, 3, 5]
+for var in vars:
+    min_val = min(np.array(matrix[:, var]).flatten())
+    max_val = max(np.array(matrix[:, var]).flatten())
+    matrix[:, var] = binning(matrix, var, 5, min_val, max_val) if (var != 5) else binning(matrix, var, 40, min_val, max_val)
+    
+mpg_max = max(matrix[:, 6])
+for i in range(6):
+    mi = 0                  # mutual information 
+    size = np.shape(matrix)[0]
+    var_max = max(matrix[:, i])
+
+    prob_matrix = np.zeros_like(np.arange((mpg_max + 1) * (var_max + 1)).reshape((mpg_max + 1), (var_max + 1)))
+    for j in range(size): 
+        prob_matrix[matrix[j, 6], matrix[j, i]] += 1
+
+    for j in range(mpg_max + 1):
+        for k in range(var_max + 1): 
+            probability = prob_matrix[j, k] / size
+            mi += probability * math.log2(probability / (sum(prob_matrix[j, :]) * sum(prob_matrix[:, k] / pow(size, 2)))) if probability > 0 else 0
+
+    print(f"Mutual Information (MPG / {var_names[i]}): {mi}")
+
