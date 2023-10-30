@@ -29,7 +29,7 @@ def data_viz(var_names, matrix):
     plt.tight_layout()
     plt.show()
 
-data_viz(var_names, matrix)
+#data_viz(var_names, matrix)
 
 # Exercise 3
 matrix = matrix.astype(np.uint16)
@@ -48,7 +48,7 @@ def count_occurrences(var_names, matrix):
                 data_dict[var].setdefault(value, 1)
     return data_dict
 
-occurrences = count_occurrences(var_names, matrix)
+#occurrences = count_occurrences(var_names, matrix)
 
 # Exercise 5
 def occurence_viz(var_names, occurrences):
@@ -78,7 +78,7 @@ for var in vars:
     max_val = max(np.array(matrix[:, var]).flatten())
     matrix[:, var] = binning(matrix, var, 5, min_val, max_val) if (var != 5) else binning(matrix, var, 40, min_val, max_val)
 
-occurrences = count_occurrences(var_names, matrix)
+#occurrences = count_occurrences(var_names, matrix)
 #occurence_viz(var_names, occurrences)
 
 # Exercise 7
@@ -159,3 +159,24 @@ for i in range(6):
 
     print(f"Mutual Information (MPG / {var_names[i]}): {mi}")
 
+#Exercise 11
+pred_mpg = np.zeros_like(matrix[:, 6])
+mpg_diff = np.zeros_like(matrix[:, 6])
+
+print("\nMPG / Predicted / Difference")
+for i in range(np.shape(matrix)[0]): 
+    pred_mpg[i] = - 5.5241 - 0.146 * matrix[i, 0] - 0.4909 * matrix[i, 1] + 0.0026 * matrix[i, 2] - 0.0045 * matrix[i, 3] + 0.6725 * matrix[i, 4] - 0.0059 * matrix[i, 5]
+    mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
+    print(matrix[i, 6], pred_mpg[i], mpg_diff[i])
+
+print("\nRemoving the variable with the least MI")
+for i in range(np.shape(matrix)[0]):
+    pred_mpg[i] += 0.146 * matrix[i, 0]
+    mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
+    print(matrix[i, 6], pred_mpg[i], mpg_diff[i])
+
+print("\nRemoving the variable with the most MI")
+for i in range(np.shape(matrix)[0]):
+    pred_mpg[i] += - 0.146 * matrix[i, 0] + 0.0059 * matrix[i, 5]
+    mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
+    print(matrix[i, 6], pred_mpg[i], mpg_diff[i])
