@@ -42,9 +42,9 @@ def occurence_viz(var_names, occurrences):
         plt.show()
 
 def binning(matrix, variable, interval, min_val, max_val):
-    for i in range(min_val, max_val + 1, interval):
+    for i in range(0, max_val + interval + 1, interval):
         temp_matrix = matrix[:, variable]
-        condition = np.where(np.logical_and(i <= temp_matrix, temp_matrix <= i + interval))
+        condition = np.where(np.logical_and(i <= temp_matrix, temp_matrix < i + interval))
         counts = np.bincount(temp_matrix[condition]) if np.size(temp_matrix[condition]) > 0 else 0
         temp_matrix[condition] = np.argmax(counts)
     return temp_matrix
@@ -58,13 +58,11 @@ def entropy(matrix) -> float:
     return entropy 
 
 def bits_per_symbol(matrix, map_symbols):
-    bits_per_symbol_ar = []
     bits_per_symbol = 0
     unique_values, unique_counts = np.unique(matrix, return_counts=True)
     for j in range(len(unique_values)):
         bits_per_symbol += map_symbols[unique_values[j]] * (unique_counts[j]/sum(unique_counts))
-        bits_per_symbol_ar.append(bits_per_symbol)
-    return bits_per_symbol_ar
+    return bits_per_symbol
 
 def variance(matrix, i, map_symbols, bits_per_symbol_ar):
     variance = 0
@@ -100,7 +98,7 @@ def main():
     var_names = data.columns.values.tolist()
 
     # Exercise 2 
-    #data_viz(var_names, matrix)
+    data_viz(var_names, matrix)
 
     # Exercise 3
     matrix = matrix.astype(np.uint16)
@@ -111,43 +109,44 @@ def main():
     occurrences = count_occurrences(var_names, matrix)
 
     # Exercise 5
-    #occurence_viz(var_names, occurrences)
+    occurence_viz(var_names, occurrences)
 
     # Exercise 6
     vars = [2, 3, 5]
-    bin_matrix = np.copy(matrix)
+    bin_matrix = data.to_numpy()
     for var in vars:
-        min_val = min(np.array(matrix[:, var]).flatten())
-        max_val = max(np.array(matrix[:, var]).flatten())
-        bin_matrix[:, var] = binning(matrix, var, 5, min_val, max_val) if (var != 5) else binning(matrix, var, 40, min_val, max_val)
+        min_val = min(np.array(bin_matrix[:, var]).flatten())
+        max_val = max(np.array(bin_matrix[:, var]).flatten())
+        bin_matrix[:, var] = binning(bin_matrix, var, 5, min_val, max_val) if (var != 5) else binning(bin_matrix, var, 40, min_val, max_val)
     bin_occurrences = count_occurrences(var_names, bin_matrix)
-    #occurence_viz(var_names, bin_occurrences)
+    occurence_viz(var_names, bin_occurrences)
 
     # Exercise 7
     entropy_values = []
     for i, var in enumerate(var_names):
-        entropy_values.append(entropy(matrix[:, i]))
-        print(f"Entropy of {var}: {entropy(matrix[:, i])}")
-    overall_entropy = entropy(matrix.flatten())
+        entropy_values.append(entropy(bin_matrix[:, i]))
+        print(f"Entropy ({var}): {entropy(bin_matrix[:, i])}")
+    overall_entropy = entropy(bin_matrix.flatten())
     print(f"Overall entropy: {overall_entropy}") 
 
     # Exercise 8
     variance_ar = []
+    bits_per_symbol_ar = []
 
     for i, var in enumerate(var_names):
-        codec = huffc.HuffmanCodec.from_data(matrix[:, i])
+        codec = huffc.HuffmanCodec.from_data(bin_matrix[:, i])
         symbols, lengths = codec.get_code_len()
         map_symbols = {}
         for j in range(len(symbols)):
             map_symbols[symbols[j]] = lengths[j]
-        bits_per_symbol_ar = bits_per_symbol(matrix[:, i], map_symbols)
-        variance_ar.append(variance(matrix[:, i], i, map_symbols, bits_per_symbol_ar))
-        print(f"Bits per symbol {var}: {bits_per_symbol_ar[i]}")
-        print(f"Variance {var}: {variance_ar[i]}")
+        bits_per_symbol_ar.append(bits_per_symbol(bin_matrix[:, i], map_symbols))
+        variance_ar.append(variance(bin_matrix[:, i], i, map_symbols, bits_per_symbol_ar))
+        print(f"Bits per symbol ({var}): {bits_per_symbol_ar[i]}")
+        print(f"Variance ({var}): {variance_ar[i]}")
     
     # Exercise 9
     for i in range(6): 
-        print(f"Correlation Coeficient (MPG / {var_names[i]}): {np.corrcoef(matrix[:, i], matrix[:, 6], rowvar=True)[0, 1]}")
+        print(f"Correlation Coeficient (MPG / {var_names[i]}): {np.corrcoef(bin_matrix[:, i], bin_matrix[:, 6], rowvar=True)[0, 1]}")
 
     # Exercise 10
     for i in range(6):
@@ -155,27 +154,27 @@ def main():
         print(f"Mutual Information (MPG / {var_names[i]}): {mi}")
 
     #Exercise 11
-    pred_mpg = np.zeros_like(matrix[:, 6])
-    mpg_diff = np.zeros_like(matrix[:, 6])
+    pred_mpg = np.zeros_like(bin_matrix[:, 6])
+    mpg_diff = np.zeros_like(bin_matrix[:, 6])
     mpg_diff = mpg_diff.astype(np.int16)
 
     print("\nMPG / Predicted / Difference")
-    for i in range(np.shape(matrix)[0]): 
-        pred_mpg[i] = - 5.5241 - 0.146 * matrix[i, 0] - 0.4909 * matrix[i, 1] + 0.0026 * matrix[i, 2] - 0.0045 * matrix[i, 3] + 0.6725 * matrix[i, 4] - 0.0059 * matrix[i, 5]
-        mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
-    print(matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
+    for i in range(np.shape(bin_matrix)[0]): 
+        pred_mpg[i] = - 5.5241 - 0.146 * bin_matrix[i, 0] - 0.4909 * bin_matrix[i, 1] + 0.0026 * bin_matrix[i, 2] - 0.0045 * bin_matrix[i, 3] + 0.6725 * bin_matrix[i, 4] - 0.0059 * bin_matrix[i, 5]
+        mpg_diff[i] = bin_matrix[i, 6] - pred_mpg[i]
+    print(bin_matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
 
     print("\nRemoving the variable with the least MI")
-    for i in range(np.shape(matrix)[0]):
-        pred_mpg[i] += 0.146 * matrix[i, 0]
-        mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
-    print(matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
+    for i in range(np.shape(bin_matrix)[0]):
+        pred_mpg[i] += 0.146 * bin_matrix[i, 0]
+        mpg_diff[i] = bin_matrix[i, 6] - pred_mpg[i]
+    print(bin_matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
 
     print("\nRemoving the variable with the most MI")
-    for i in range(np.shape(matrix)[0]):
-        pred_mpg[i] += - 0.146 * matrix[i, 0] + 0.0059 * matrix[i, 5]
-        mpg_diff[i] = matrix[i, 6] - pred_mpg[i]
-    print(matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
+    for i in range(np.shape(bin_matrix)[0]):
+        pred_mpg[i] += - 0.146 * bin_matrix[i, 0] + 0.0059 * bin_matrix[i, 5]
+        mpg_diff[i] = bin_matrix[i, 6] - pred_mpg[i]
+    print(bin_matrix[:, 6], "\n\n", pred_mpg[:], "\n\n", mpg_diff[:])
 
 
 if __name__ == "__main__":
