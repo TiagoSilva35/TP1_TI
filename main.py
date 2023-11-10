@@ -153,7 +153,7 @@ def main():
     # Exercise 3: typecasting the matrix and defining the dataset's alphabet
     matrix = matrix.astype(np.uint16)
     alphabet_ar = []
-    for i in range(np.shape(matrix)[1]): alphabet_ar.append(tuple(range(np.max(matrix[:, i]))))
+    for i in range(np.shape(matrix)[1]): alphabet_ar.append(tuple(range(np.max(matrix[:, i]) + 1)))
 
     # Exercise 4: counting occurrences of symbols for each variable
     occurrences = count_occurrences(var_names, matrix)
